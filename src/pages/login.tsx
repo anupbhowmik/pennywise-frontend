@@ -4,7 +4,7 @@ import { GoogleLogin } from "@react-oauth/google"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
-const AUTH_VERIFY_ENDPOINT = "/auth/google"
+const AUTH_VERIFY_ENDPOINT = "/v1/auth/google"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -12,33 +12,37 @@ export default function Login() {
 
   const verifyCredentials = async (credential: string) => {
     setLoading(true)
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}${AUTH_VERIFY_ENDPOINT}`,
-      { token: credential }
-    )
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}${AUTH_VERIFY_ENDPOINT}`,
+        { token: credential }
+      )
 
-    setLoading(false)
+      console.log("resp data:", response.data)
 
-    console.log("resp data:", response.data)
-
-    if (response?.data?.google_id) {
-      navigate("/")
+      if (response?.data?.access_token) {
+        localStorage.setItem("token", response.data.access_token)
+        navigate("/")
+      }
+    } catch (error) {
+      console.error("Error verifying credentials:", error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleGoogleSuccess = async (
-    credentialResponse
-  ) => {
+  const handleGoogleSuccess = async (credentialResponse) => {
     if (!credentialResponse.credential) {
       return
     }
 
-    console.log("Received Google credential response:", credentialResponse)
-
-    // save in local storage
-    localStorage.setItem("token", credentialResponse.credential)
-
-    await verifyCredentials(credentialResponse.credential)
+    try {
+      console.log("Received Google credential response:", credentialResponse)
+      await verifyCredentials(credentialResponse.credential)
+    } catch (error) {
+      console.error("Error during Google login:", error)
+      localStorage.removeItem("token")
+    }
   }
 
   return (
@@ -49,10 +53,11 @@ export default function Login() {
             <Receipt className="h-8 w-8 text-primary" />
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight">
-            Welcome Back
+            Welcome Back to PocketFlow
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Sign in to your Receipt Processor account
+            Sign in to get a personal Finance Assistant powered by AI, tailored
+            just for you.
           </p>
         </div>
 
