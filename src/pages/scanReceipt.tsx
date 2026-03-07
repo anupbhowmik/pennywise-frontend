@@ -106,7 +106,7 @@ export default function ScanReceipt() {
         <div className="flex h-[500px] flex-col">
           {!file ? (
             <div
-              className={`upload-zone-dashed flex flex-1 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 transition-all duration-200 ${isDragging ? "scale-[1.02] border-primary bg-primary/5" : "border-border bg-card hover:bg-secondary/50"} `}
+              className={`upload-zone-dashed flex flex-1 cursor-pointer flex-col items-center justify-center rounded-2xl p-8 transition-all duration-200 ${isDragging ? "scale-[1.02] border-primary bg-primary/5" : "border-border bg-card hover:bg-secondary/50"} `}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
