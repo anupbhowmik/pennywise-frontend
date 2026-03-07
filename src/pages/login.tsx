@@ -3,6 +3,7 @@ import { Receipt, Loader2 } from "lucide-react"
 import { GoogleLogin } from "@react-oauth/google"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import toast from 'react-hot-toast'
 
 const AUTH_VERIFY_ENDPOINT = "/v1/auth/google"
 
@@ -22,6 +23,7 @@ export default function Login() {
 
       if (response?.data?.access_token) {
         localStorage.setItem("token", response.data.access_token)
+        toast.success("Login successful!")
         navigate("/")
       }
     } catch (error) {

@@ -9,9 +9,16 @@ import {
 } from "lucide-react"
 import { API_BASE_URL } from "@/App"
 import { useApiRequest } from "@/hooks/useApiRequest"
+import toast from "react-hot-toast"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
+  const logout = () => {
+    localStorage.removeItem("token")
+    toast.success("Logged out successfully!")
+    navigate("/login")
+  }
+
   const profileResp = useApiRequest({
     url: `${API_BASE_URL}/v1/auth/user/profile`,
     method: "GET",
@@ -67,10 +74,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Logout button at bottom of sidebar */}
         <div className="mt-auto border-t border-border p-4">
           <button
-            onClick={() => {
-              localStorage.removeItem("token")
-              navigate("/login")
-            }}
+            onClick={logout}
             className="flex w-full items-center rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="mr-3 h-4 w-4" />
