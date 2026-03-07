@@ -7,6 +7,7 @@ import {
   Wallet,
   User,
   Sparkles,
+  Database,
 } from "lucide-react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 
@@ -36,7 +37,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/scan-receipt", label: "Scan Receipt", icon: Receipt },
     { href: "/ai-feed", label: "AI Feed", icon: Sparkles },
-    { href: "/settings", label: "Settings", icon: Settings },
+    { href: "/my-data", label: "Your Data", icon: Database },
   ]
 
   return (

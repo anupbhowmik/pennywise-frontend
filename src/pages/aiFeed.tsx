@@ -30,22 +30,19 @@ const typeStyles: Record<
 
 export default function AiFeedPage() {
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="animate-in duration-500 fade-in slide-in-from-bottom-4 flex flex-col gap-4">
       <h1 className="mb-4 text-2xl font-bold">AI Feed</h1>
       {mockInsights.map((item) => {
         const style = typeStyles[item.type] || {}
         return (
-          <Card
-            key={item.id}
-            className={`w-full shadow-none`}
-          >
+          <Card key={item.id} className={`w-full shadow-none`}>
             <CardHeader className="relative p-6 pb-2">
               <div className="absolute top-7 left-6">{style.icon}</div>
               <div className="pl-10">
                 <CardTitle className="mb-1 text-lg font-bold">
                   {item.title}
                 </CardTitle>
-                <CardDescription className="text-base mb-5 leading-snug">
+                <CardDescription className="mb-5 text-base leading-snug">
                   {item.description}
                 </CardDescription>
               </div>
