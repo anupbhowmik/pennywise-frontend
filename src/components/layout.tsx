@@ -9,12 +9,15 @@ import {
   Sparkles,
 } from "lucide-react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+
 import { API_BASE_URL } from "@/App"
 import { useApiRequest } from "@/hooks/useApiRequest"
 import toast from "react-hot-toast"
+import { useTheme } from "./theme-provider"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
+  const { theme, setTheme } = useTheme()
   const logout = () => {
     localStorage.removeItem("token")
     toast.success("Logged out successfully!")
@@ -105,7 +108,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <DropdownMenu.Content
                 sideOffset={8}
                 align="end"
-                className="z-50 min-w-[180px] rounded-md border border-border bg-card p-2 shadow-lg focus:outline-none"
+                className="z-50 min-w-45 rounded-md border border-border bg-card p-2 shadow-lg focus:outline-none"
               >
                 <div className="mb-1 border-b border-border px-2 py-1.5">
                   <div className="text-sm font-medium">
@@ -122,6 +125,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Settings className="h-4 w-4" />
                   Profile & Settings
                 </DropdownMenu.Item>
+                <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                <div className="px-2 py-1.5">
+                  <div className="mb-1 text-xs font-semibold">Theme</div>
+                  <div className="flex gap-2">
+                    <button
+                      className={`rounded px-2 py-1 text-sm ${theme === "light" ? "bg-muted font-bold" : "hover:bg-muted"}`}
+                      onClick={() => setTheme("light")}
+                    >
+                      Light
+                    </button>
+                    <button
+                      className={`rounded px-2 py-1 text-sm ${theme === "dark" ? "bg-muted font-bold" : "hover:bg-muted"}`}
+                      onClick={() => setTheme("dark")}
+                    >
+                      Dark
+                    </button>
+                    <button
+                      className={`rounded px-2 py-1 text-sm ${theme === "system" ? "bg-muted font-bold" : "hover:bg-muted"}`}
+                      onClick={() => setTheme("system")}
+                    >
+                      System
+                    </button>
+                  </div>
+                </div>
                 <DropdownMenu.Separator className="my-1 h-px bg-border" />
                 <DropdownMenu.Item
                   className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-destructive outline-none hover:bg-destructive/10 focus:bg-destructive/10"
@@ -160,7 +187,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </DropdownMenu.Trigger>
               <DropdownMenu.Content
                 sideOffset={8}
-                className="z-50 min-w-[180px] rounded-md border border-border bg-card p-2 shadow-lg focus:outline-none"
+                className="z-50 min-w-45 rounded-md border border-border bg-card p-2 shadow-lg focus:outline-none"
               >
                 <div className="mb-1 border-b border-border px-2 py-1.5">
                   <div className="text-sm font-medium">
@@ -177,6 +204,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Settings className="h-4 w-4" />
                   Profile & Settings
                 </DropdownMenu.Item>
+                <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                <div className="px-2 py-1.5">
+                  <div className="mb-1 text-xs font-semibold">Theme</div>
+                  <div className="flex gap-2">
+                    <button
+                      className={`rounded px-2 py-1 text-sm ${theme === "light" ? "bg-muted font-bold" : "hover:bg-muted"}`}
+                      onClick={() => setTheme("light")}
+                    >
+                      Light
+                    </button>
+                    <button
+                      className={`rounded px-2 py-1 text-sm ${theme === "dark" ? "bg-muted font-bold" : "hover:bg-muted"}`}
+                      onClick={() => setTheme("dark")}
+                    >
+                      Dark
+                    </button>
+                    <button
+                      className={`rounded px-2 py-1 text-sm ${theme === "system" ? "bg-muted font-bold" : "hover:bg-muted"}`}
+                      onClick={() => setTheme("system")}
+                    >
+                      System
+                    </button>
+                  </div>
+                </div>
                 <DropdownMenu.Separator className="my-1 h-px bg-border" />
                 <DropdownMenu.Item
                   className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-destructive outline-none hover:bg-destructive/10 focus:bg-destructive/10"

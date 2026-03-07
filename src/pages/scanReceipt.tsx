@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
-import toast from 'react-hot-toast'
 import { API_BASE_URL } from '@/App'
 
 export default function ScanReceipt() {
@@ -58,14 +57,6 @@ export default function ScanReceipt() {
     }
   }
 
-  const simulateScan = () => {
-    setScanState("scanning")
-    // Simulate OCR processing time
-    setTimeout(() => {
-      setScanState("success")
-    }, 3000)
-  }
-
   const uploadImage = async () => {
     if (!file) return
     setScanState("scanning")
@@ -85,7 +76,6 @@ export default function ScanReceipt() {
       )
       console.log("Upload response:", response.data)
       setScanState("success")
-      toast.success("Receipt scanned and data inserted to Database!")
     } catch (error) {
       console.error("Error uploading receipt:", error)
       setScanState("idle")
