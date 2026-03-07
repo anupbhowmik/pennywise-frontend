@@ -13,8 +13,19 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 
 import { API_BASE_URL } from "@/App"
 import { useApiRequest } from "@/hooks/useApiRequest"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useTheme } from "./theme-provider"
+import { regularApiRequest } from "@/hooks/regularApiRequest"
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
@@ -29,9 +40,60 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     url: `${API_BASE_URL}/v1/auth/user/profile`,
     method: "GET",
   })
+
   const userData = (profileResp?.data ?? undefined) as
-    | { display_name?: string; email?: string }
+    | {
+        display_name?: string
+        email?: string
+        income?: number | null
+        rent?: number | null
+        gym_subscription?: number | null
+        insurance?: number | null
+      }
     | undefined
+
+  // State for dialog/modal
+  const [showProfileDialog, setShowProfileDialog] = useState(false)
+  const [income, setIncome] = useState<string>("")
+  const [rent, setRent] = useState<string>("")
+  const [gymSubscription, setGymSubscription] = useState<string>("")
+  const [insurance, setInsurance] = useState<string>("")
+  const [saving, setSaving] = useState(false)
+
+  // Show dialog if income or rent is null/undefined/empty after login/profile fetch
+  useEffect(() => {
+    if (userData && (userData.income == null || userData.rent == null)) {
+      setShowProfileDialog(true)
+      setIncome(userData.income != null ? String(userData.income) : "")
+      setRent(userData.rent != null ? String(userData.rent) : "")
+      setGymSubscription(
+        userData.gym_subscription != null
+          ? String(userData.gym_subscription)
+          : ""
+      )
+      setInsurance(userData.insurance != null ? String(userData.insurance) : "")
+    }
+  }, [userData])
+
+  const updateProfile = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+    const response = await regularApiRequest({
+      url: `${API_BASE_URL}/v1/auth/user/profile`,
+      method: "PUT",
+      reqBody: {
+        income: Number(income),
+        rent: Number(rent),
+        gym_subscription: Number(gymSubscription),
+        insurance: Number(insurance),
+      },
+    })
+    if (response) {
+      toast.success("Profile updated successfully!")
+      setShowProfileDialog(false)
+    }
+    setSaving(false)
+  }
 
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -42,6 +104,93 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
+      <Dialog open={showProfileDialog} onOpenChange={setShowProfileDialog}>
+        <DialogContent className="w-full max-w-sm">
+          <DialogTitle>Complete your profile</DialogTitle>
+          <DialogDescription>
+            Please enter your monthly income and rent to get started.
+          </DialogDescription>
+          <form onSubmit={updateProfile} className="mt-4 space-y-4">
+            <div>
+              <label
+                htmlFor="income"
+                className="mb-1 block text-sm font-medium"
+              >
+                Monthly Income ($)
+              </label>
+              <Input
+                id="income"
+                type="number"
+                min="0"
+                value={income}
+                onChange={(e) => setIncome(e.target.value)}
+                className="w-full rounded border px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="rent" className="mb-1 block text-sm font-medium">
+                Monthly Rent ($)
+              </label>
+              <Input
+                id="rent"
+                type="number"
+                min="0"
+                value={rent}
+                onChange={(e) => setRent(e.target.value)}
+                className="w-full rounded border px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="gym_subscription"
+                className="mb-1 block text-sm font-medium"
+              >
+                Monthly Gym Subscription ($)
+              </label>
+              <Input
+                id="gym_subscription"
+                type="number"
+                min="0"
+                value={gymSubscription}
+                onChange={(e) => setGymSubscription(e.target.value)}
+                className="w-full rounded border px-3 py-2"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="insurance"
+                className="mb-1 block text-sm font-medium"
+              >
+                Monthly Insurance ($)
+              </label>
+              <Input
+                id="insurance"
+                type="number"
+                min="0"
+                value={insurance}
+                onChange={(e) => setInsurance(e.target.value)}
+                className="w-full rounded border px-3 py-2"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowProfileDialog(false)}
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={saving}>
+                {saving ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
       {/* Sidebar (Desktop) */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card md:flex">
         <div className="flex h-16 items-center border-b border-border px-6">
@@ -121,7 +270,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
                 <DropdownMenu.Item
                   className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm outline-none hover:bg-muted focus:bg-muted"
-                  onSelect={() => navigate("/settings")}
+                  onSelect={() => {
+                    setShowProfileDialog(true)
+                  }}
                 >
                   <Settings className="h-4 w-4" />
                   Profile & Settings
@@ -200,7 +351,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
                 <DropdownMenu.Item
                   className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm outline-none hover:bg-muted focus:bg-muted"
-                  onSelect={() => navigate("/settings")}
+                  onSelect={() => {
+                    setShowProfileDialog(true)
+                  }}
                 >
                   <Settings className="h-4 w-4" />
                   Profile & Settings
