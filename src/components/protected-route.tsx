@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
-import axios from 'axios';
-
-const AUTH_VERIFY_ENDPOINT = '/v1/auth/google';
 
 export default function ProtectedRoute({ children }) {
   const [, setLocation] = useLocation();

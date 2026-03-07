@@ -5,7 +5,8 @@ import { Toaster } from "react-hot-toast"
 import Dashboard from "./pages/dashboard"
 import Layout from "./components/layout"
 import ProtectedRoute from "@/components/protected-route"
-import ScanReceipt from './pages/scanReceipt'
+import ScanReceipt from "./pages/scanReceipt"
+import AiFeedPage from "@/pages/aiFeed"
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -32,6 +33,16 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <ScanReceipt />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-feed"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AiFeedPage />
                 </Layout>
               </ProtectedRoute>
             }
