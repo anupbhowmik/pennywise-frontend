@@ -2,11 +2,13 @@ import { NavLink, useNavigate } from "react-router-dom"
 import {
   LayoutDashboard,
   Receipt,
-  PieChart,
   Settings,
   LogOut,
   Wallet,
+  User,
+  Sparkles,
 } from "lucide-react"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { API_BASE_URL } from "@/App"
 import { useApiRequest } from "@/hooks/useApiRequest"
 import toast from "react-hot-toast"
@@ -30,7 +32,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/scan-receipt", label: "Scan Receipt", icon: Receipt },
-    { href: "/analytics", label: "Analytics", icon: PieChart },
+    { href: "/ai-feed", label: "AI Feed", icon: Sparkles },
     { href: "/settings", label: "Settings", icon: Settings },
   ]
 
@@ -91,11 +93,45 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="font-display text-lg font-bold">PocketFlow</span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex flex-col items-end">
-              <span className="text-sm leading-none font-medium">
-                {userData?.display_name}
-              </span>
-            </div>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button
+                  className="flex items-center justify-center rounded-full p-2 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="User menu"
+                >
+                  <User className="h-6 w-6 text-primary" />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content
+                sideOffset={8}
+                align="end"
+                className="z-50 min-w-[180px] rounded-md border border-border bg-card p-2 shadow-lg focus:outline-none"
+              >
+                <div className="mb-1 border-b border-border px-2 py-1.5">
+                  <div className="text-sm font-medium">
+                    {userData?.display_name || "User"}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {userData?.email}
+                  </div>
+                </div>
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm outline-none hover:bg-muted focus:bg-muted"
+                  onSelect={() => navigate("/settings")}
+                >
+                  <Settings className="h-4 w-4" />
+                  Profile & Settings
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-destructive outline-none hover:bg-destructive/10 focus:bg-destructive/10"
+                  onSelect={logout}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
         </header>
 
@@ -110,14 +146,47 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             })}
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex flex-col items-end">
-              <span className="text-sm leading-none font-medium">
-                {userData?.display_name}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {userData?.email}
-              </span>
-            </div>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button
+                  className="flex items-center gap-2 rounded-md px-3 py-2 hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="User menu"
+                >
+                  <User className="h-6 w-6 text-primary" />
+                  <span className="hidden text-sm font-medium md:inline">
+                    {userData?.display_name || "User"}
+                  </span>
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content
+                sideOffset={8}
+                className="z-50 min-w-[180px] rounded-md border border-border bg-card p-2 shadow-lg focus:outline-none"
+              >
+                <div className="mb-1 border-b border-border px-2 py-1.5">
+                  <div className="text-sm font-medium">
+                    {userData?.display_name || "User"}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {userData?.email}
+                  </div>
+                </div>
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm outline-none hover:bg-muted focus:bg-muted"
+                  onSelect={() => navigate("/settings")}
+                >
+                  <Settings className="h-4 w-4" />
+                  Profile & Settings
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator className="my-1 h-px bg-border" />
+                <DropdownMenu.Item
+                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-2 text-sm text-destructive outline-none hover:bg-destructive/10 focus:bg-destructive/10"
+                  onSelect={logout}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
         </header>
 
