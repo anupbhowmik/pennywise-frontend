@@ -16,8 +16,10 @@ import {
   Sparkles,
   Store,
   ChevronDown,
+  Loader2,
 } from "lucide-react"
 import { useSearchParams, useNavigate } from "react-router-dom"
+import { useState } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -198,8 +200,12 @@ export default function AiFeedPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const selectedDay = searchParams.get("day") || "7"
+  const [pendingDay, setPendingDay] = useState<string | null>(null)
 
   const handleDayChange = (day: string) => {
+    if (day === selectedDay) return
+
+    setPendingDay(day)
     // Update URL with new day parameter
     navigate(`?day=${day}`, { replace: true })
   }
@@ -217,6 +223,7 @@ export default function AiFeedPage() {
     { label: "Last 14 days", value: "14" },
     { label: "Last 30 days", value: "30" },
   ]
+  const isDayChanging = dataLoading && pendingDay === selectedDay
 
   return (
     <div className="animate-in space-y-6 duration-500 fade-in slide-in-from-bottom-4">
@@ -233,10 +240,20 @@ export default function AiFeedPage() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                {dayOptions.find((opt) => opt.value === selectedDay)?.label ||
-                  "Select period"}
+              <Button
+                variant="outline"
+                className="gap-2"
+                disabled={isDayChanging}
+              >
+                {isDayChanging ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Calendar className="h-4 w-4" />
+                )}
+                {isDayChanging
+                  ? "Updating..."
+                  : dayOptions.find((opt) => opt.value === selectedDay)
+                      ?.label || "Select period"}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
