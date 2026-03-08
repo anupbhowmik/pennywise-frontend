@@ -7,9 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from '@/components/ui/textarea'
-import { useApiRequest } from "@/hooks/useApiRequest"
+import { regularApiRequest } from "@/hooks/regularApiRequest"
 import { Sparkles, Send, Loader2 } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import toast from "react-hot-toast"
@@ -21,11 +19,29 @@ type Message = {
   timestamp: Date
 }
 
-type PlanSession = {
-  id: string
-  title: string
-  messages: Message[]
-  created_at: string
+type PlannerChatPayloadItem = {
+  user: string
+  airesponse: string
+}
+
+const buildPlannerHistoryPayload = (
+  chatMessages: Message[]
+): PlannerChatPayloadItem[] => {
+  const history: PlannerChatPayloadItem[] = []
+
+  chatMessages.forEach((message) => {
+    if (message.role === "user") {
+      history.push({ user: message.content, airesponse: "" })
+      return
+    }
+
+    const lastEntry = history[history.length - 1]
+    if (lastEntry) {
+      lastEntry.airesponse = message.content
+    }
+  })
+
+  return history
 }
 
 export default function AiPlannerPage() {
@@ -61,11 +77,38 @@ export default function AiPlannerPage() {
       timestamp: new Date(),
     }
 
+    const nextMessages = [...messages, userMessage]
     setMessages((prev) => [...prev, userMessage])
     setInput("")
     setIsLoading(true)
 
-    // api call here
+    try {
+      const response = await regularApiRequest({
+        url: `${API_BASE_URL}/v1/planner/chat`,
+        method: "POST",
+        reqBody: {
+          messages: buildPlannerHistoryPayload(nextMessages),
+        },
+      })
+
+      if (!response?.data?.response) {
+        toast.error("Error getting response from AI")
+        return
+      }
+
+      const assistantMessage: Message = {
+        id: Date.now().toString() + "_assistant",
+        role: "assistant",
+        content: response.data.response,
+        timestamp: new Date(),
+      }
+
+      setMessages((prev) => [...prev, assistantMessage])
+    } catch {
+      toast.error("Error getting response from AI")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleClearChat = () => {
@@ -75,7 +118,6 @@ export default function AiPlannerPage() {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <h1 className="text-3xl font-bold">AI Planner</h1>
@@ -85,7 +127,6 @@ export default function AiPlannerPage() {
         </p>
       </div>
 
-      {/* Chat Container */}
       <Card className="flex h-[600px] flex-col border-primary/20 shadow-sm">
         <CardHeader className="border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
           <CardTitle className="text-lg">Planning Assistant</CardTitle>
@@ -96,7 +137,6 @@ export default function AiPlannerPage() {
           </CardDescription>
         </CardHeader>
 
-        {/* Messages Area */}
         <CardContent className="flex-1 space-y-4 overflow-y-auto p-4">
           {messages.length === 0 ? (
             <div className="flex h-full items-center justify-center">
@@ -120,7 +160,7 @@ export default function AiPlannerPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-xs rounded-lg px-4 py-2 ${
+                    className={`max-w-xl rounded-lg px-4 py-2 ${
                       message.role === "user"
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted text-foreground"
