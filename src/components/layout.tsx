@@ -116,10 +116,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/scan-receipt", label: "Scan Receipt", icon: Receipt },
+    { href: "/scan-receipt", label: "Receipt Scanner", icon: Receipt },
     { href: "/ai-feed", label: "AI Feed", icon: Sparkles },
     { href: "/ai-planner", label: "AI Planner", icon: Brain },
-    { href: "/my-data", label: "Your Data", icon: Database },
+    { href: "/my-data", label: "My Data", icon: Database },
   ]
 
   return (

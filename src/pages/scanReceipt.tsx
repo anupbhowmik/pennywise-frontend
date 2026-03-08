@@ -92,12 +92,11 @@ export default function ScanReceipt() {
     <div className="mx-auto max-w-5xl animate-in duration-500 fade-in slide-in-from-bottom-4">
       <div className="mb-8">
         <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-          Smart Receipt Scanner
+          Receipt Scanner
         </h1>
         <p className="mt-1 text-muted-foreground">
-          Upload a receipt image. It will extract data using OCR (Optical
-          Character Recognition). Then our AI Agent will extract relevant data,
-          categorize the expense, and sync it to your dashboard!
+          Upload a receipt image. It will extract data using OCR. Then our AI Agent will extract relevant data,
+          categorize the expense, and sync it to your database!
         </p>
       </div>
 

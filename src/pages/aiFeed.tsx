@@ -11,7 +11,6 @@ import {
   ArrowRight,
   BadgeDollarSign,
   Calendar,
-  Fuel,
   Package,
   Sparkles,
   Store,
@@ -154,7 +153,7 @@ function PriceComparisonCard({ item }: { item: FeedItem }) {
           </p>
         </div>
 
-        <div className="grid gap-2 md:grid-cols-[1fr_auto_1fr] md:items-center">
+        <div className="grid gap-2 md:grid-cols-[1fr_auto_1fr_1fr] md:items-center">
           <div className="rounded-lg border border-border/70 bg-background/70 p-3">
             <p className="mb-1 flex items-center gap-1 text-xs text-muted-foreground">
               <Store className="h-3.5 w-3.5" />
@@ -182,15 +181,15 @@ function PriceComparisonCard({ item }: { item: FeedItem }) {
               {formatMoney(item.suggested_price)}
             </p>
           </div>
-        </div>
 
-        <div className="rounded-lg border border-emerald-700/30 bg-emerald-500/10 p-3">
-          <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80">
-            Potential savings per purchase
-          </p>
-          <p className="text-xl font-bold text-emerald-800 dark:text-emerald-200">
-            {formatMoney(item.saving)}
-          </p>
+          <div className="h-full rounded-lg border border-emerald-700/30 bg-emerald-500/10 p-3">
+            <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80">
+              Potential savings per purchase
+            </p>
+            <p className="text-xl font-bold text-emerald-800 dark:text-emerald-200">
+              {formatMoney(item.saving)}
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>

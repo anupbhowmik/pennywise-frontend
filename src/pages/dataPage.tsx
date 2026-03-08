@@ -16,6 +16,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { ChevronDownIcon } from "lucide-react"
 import { API_BASE_URL } from "@/App"
 import { useApiRequest } from "@/hooks/useApiRequest"
 import { regularApiRequest } from "@/hooks/regularApiRequest"
@@ -58,9 +65,10 @@ export default function DataPage() {
     useState<TransactionRow | null>(null)
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+  const [limit, setLimit] = useState<number>(10)
 
   const { data, dataLoading, error } = useApiRequest({
-    url: `${API_BASE_URL}/v1/data/items`,
+    url: `${API_BASE_URL}/v1/data/items?limit=${limit}`,
     method: "GET",
   })
 
@@ -211,9 +219,33 @@ export default function DataPage() {
     <div className="animate-in duration-500 fade-in slide-in-from-bottom-4">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Transaction History</h1>
-        <p className="text-sm text-muted-foreground">
-          {visibleItems.length} total transactions
-        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            {visibleItems.length} total transactions
+          </p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                Limit: {limit}
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setLimit(10)}>
+                10 items
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLimit(25)}>
+                25 items
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLimit(50)}>
+                50 items
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLimit(100)}>
+                100 items
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
         <Table className="min-w-225">
