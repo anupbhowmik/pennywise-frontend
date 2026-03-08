@@ -39,10 +39,10 @@ export default function AiFeedPage() {
             <CardHeader className="relative p-6 pb-2">
               <div className="absolute top-7 left-6">{style.icon}</div>
               <div className="pl-10">
-                <CardTitle className="mb-1 text-lg font-bold">
+                <CardTitle className="mb-1 text-sm font-bold">
                   {item.title}
                 </CardTitle>
-                <CardDescription className="mb-5 text-base leading-snug">
+                <CardDescription className="mb-5 text-sm leading-snug">
                   {item.description}
                 </CardDescription>
               </div>
