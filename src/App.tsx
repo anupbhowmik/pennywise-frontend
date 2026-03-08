@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/protected-route"
 import ScanReceipt from "./pages/scanReceipt"
 import AiFeedPage from "@/pages/aiFeed"
 import DataPage from "@/pages/dataPage"
+import AiPlannerPage from "@/pages/aiPlanner"
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -54,6 +55,16 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <DataPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-planner"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AiPlannerPage />
                 </Layout>
               </ProtectedRoute>
             }
