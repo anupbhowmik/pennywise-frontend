@@ -16,6 +16,7 @@ import {
   Info,
   AlertTriangle,
   Lightbulb,
+  Receipt,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -66,10 +67,10 @@ export default function Dashboard() {
       title: "Last Receipt Total",
       value: summaryData?.last_receipt_total,
       prefix: "$",
-      icon: CreditCard,
-      iconClassName: "text-destructive",
-      iconWrapperClassName: "bg-destructive/10",
-      glowClassName: "bg-destructive/10",
+      icon: Receipt,
+      iconClassName: "text-yellow-400",
+      iconWrapperClassName: "bg-yellow-600/10",
+      glowClassName: "bg-yellow-600/10",
     },
   ]
 
