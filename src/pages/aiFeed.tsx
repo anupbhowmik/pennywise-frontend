@@ -17,6 +17,7 @@ import {
   Store,
   ChevronDown,
   Loader2,
+  Receipt,
 } from "lucide-react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { useState } from "react"
@@ -78,7 +79,7 @@ function TransactionSummaryCard({ item }: { item: FeedItem }) {
       <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
       <CardHeader className="space-y-3 p-5 pb-3">
         <div className="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-          <Fuel className="h-3.5 w-3.5" />
+          <Receipt className="h-3.5 w-3.5" />
           Transaction Summary
         </div>
         <CardTitle className="text-lg leading-tight">{item.title}</CardTitle>
