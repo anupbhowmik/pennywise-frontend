@@ -66,16 +66,11 @@ export default function Login() {
           <div className="pointer-events-none absolute right-10 -bottom-24 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
 
           <div className="relative z-10 animate-in space-y-7 duration-700 fade-in slide-in-from-left-4">
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold tracking-[0.18em] uppercase">
-              <Sparkles className="h-3.5 w-3.5" />
-              Built For Calm Money Management
-            </div>
-
             <div className="space-y-4">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 shadow-inner ring-1 shadow-white/20 ring-white/35">
                 <Receipt className="h-7 w-7" />
               </div>
-              <h1 className="max-w-lg font-display text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
+              <h1 className="max-w-lg font-display text-3xl leading-tight font-semibold tracking-tight sm:text-5xl">
                 Welcome to PennyWise.
                 <span className="block text-emerald-100/95">
                   Track smarter. Stress less.

@@ -217,6 +217,12 @@ export default function AiFeedPage() {
 
   const feedData = (data as FeedResponse | null) || { feeds: [], count: 0 }
   const feeds = feedData.feeds || []
+  const sortedFeeds = [...feeds].sort((a, b) => {
+    const getPriority = (type: FeedType) =>
+      type === "price_comparison" ? 0 : 1
+
+    return getPriority(a.type) - getPriority(b.type)
+  })
 
   const dayOptions = [
     { label: "Last 7 days", value: "7" },
@@ -298,7 +304,7 @@ export default function AiFeedPage() {
       )}
 
       <div className="space-y-4">
-        {feeds.map((item, index) => {
+        {sortedFeeds.map((item, index) => {
           const key = `${item.type}-${item.title}-${index}`
 
           if (item.type === "price_comparison") {
