@@ -17,10 +17,15 @@ import {
   AlertTriangle,
   Lightbulb,
   Receipt,
+  Scan,
+  ScanText,
 } from "lucide-react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function Dashboard() {
+  const navigate = useNavigate()
+
   const { data, dataLoading, error } = useApiRequest({
     url: `${API_BASE_URL}/v1/insights`,
     method: "GET",
@@ -85,6 +90,10 @@ export default function Dashboard() {
             Here's what's happening with your money.
           </p>
         </div>
+        <Button size="lg" onClick={() => navigate("/scan-receipt")}>
+          <ScanText className="h-4 w-4" />
+          Scan Receipt
+        </Button>
       </div>
 
       <div className="mb-8 flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
