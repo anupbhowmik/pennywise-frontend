@@ -8,12 +8,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useApiRequest } from "@/hooks/useApiRequest"
-// import { mockInsights } from "@/lib/mock-data"
 import {
-  ArrowUpRight,
   CreditCard,
   DollarSign,
-  Target,
   Sparkles,
   TrendingUp,
   Info,
@@ -38,8 +35,43 @@ export default function Dashboard() {
   }
   const insights: Insight[] = (data?.insights || []) as Insight[]
 
+  const { data: summaryData } = useApiRequest({
+    url: `${API_BASE_URL}/v1/dashboard/summary`,
+    method: "GET",
+  })
+
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [loadingId, setLoadingId] = useState<string | null>(null)
+
+  const summaryCards = [
+    {
+      title: "Total Transactions",
+      value: summaryData?.total_transactions,
+      prefix: "",
+      icon: DollarSign,
+      iconClassName: "text-primary",
+      iconWrapperClassName: "bg-primary/10",
+      glowClassName: "bg-primary/10",
+    },
+    {
+      title: "Total Spent",
+      value: summaryData?.total_spent,
+      prefix: "$",
+      icon: CreditCard,
+      iconClassName: "text-destructive",
+      iconWrapperClassName: "bg-destructive/10",
+      glowClassName: "bg-destructive/10",
+    },
+    {
+      title: "Last Receipt Total",
+      value: summaryData?.last_receipt_total,
+      prefix: "$",
+      icon: CreditCard,
+      iconClassName: "text-destructive",
+      iconWrapperClassName: "bg-destructive/10",
+      glowClassName: "bg-destructive/10",
+    },
+  ]
 
   return (
     <div className="animate-in duration-500 fade-in slide-in-from-bottom-4">
@@ -54,69 +86,42 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-        <Card className="glass-panel relative overflow-hidden border-none shadow-sm">
-          <div className="pointer-events-none absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Balance
-            </CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-              <DollarSign className="h-4 w-4 text-primary" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-display text-3xl font-bold">$12,450.80</div>
-            <p className="mt-1 flex items-center text-xs text-muted-foreground">
-              <span className="mr-1 flex items-center text-emerald-500">
-                <ArrowUpRight className="mr-0.5 h-3 w-3" /> +2.5%
-              </span>
-              from last month
-            </p>
-          </CardContent>
-        </Card>
+      <div className="mb-8 flex gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
+        {summaryCards.map((card) => {
+          const Icon = card.icon
 
-        <Card className="glass-panel relative overflow-hidden border-none shadow-sm">
-          <div className="pointer-events-none absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-destructive/10 blur-3xl" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Spent (Oct)
-            </CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10">
-              <CreditCard className="h-4 w-4 text-destructive" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-display text-3xl font-bold">$3,400.00</div>
-            <p className="mt-1 flex items-center text-xs text-muted-foreground">
-              <span className="mr-1 flex items-center text-destructive">
-                <ArrowUpRight className="mr-0.5 h-3 w-3" /> +12.1%
-              </span>
-              from last month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-panel relative overflow-hidden border-none shadow-sm">
-          <div className="pointer-events-none absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-blue-500/10 blur-3xl" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Savings Goal
-            </CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10">
-              <Target className="h-4 w-4 text-blue-500" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="font-display text-3xl font-bold">$1,200.00</div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary">
-              <div className="h-full w-[65%] bg-blue-500" />
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              65% of $2,000 goal
-            </p>
-          </CardContent>
-        </Card>
+          return (
+            <Card
+              key={card.title}
+              className="glass-panel relative min-w-46 shrink-0 overflow-hidden border border-primary shadow-sm md:min-w-0"
+            >
+              <div
+                className={`pointer-events-none absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full blur-3xl ${card.glowClassName}`}
+              />
+              <CardHeader className="flex flex-row items-center justify-between p-3 pb-1 md:pb-2">
+                <CardTitle className="text-xs font-medium text-muted-foreground md:text-sm">
+                  {card.title}
+                </CardTitle>
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full md:h-8 md:w-8 ${card.iconWrapperClassName}`}
+                >
+                  <Icon
+                    className={`h-3.5 w-3.5 md:h-4 md:w-4 ${card.iconClassName}`}
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="px-3 pb-3 md:px-6 md:pb-6">
+                <div className="font-display text-xl font-bold md:text-3xl">
+                  {card.prefix}
+                  {card.value}
+                </div>
+                <p className="mt-1 flex items-center text-xs text-muted-foreground">
+                  from last month
+                </p>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       <div className="col-span-1 space-y-6">
@@ -204,8 +209,8 @@ export default function Dashboard() {
                                 Loading AI suggestions...
                               </div>
                             ) : (
-                              <div className="flex w-fit mt-2 flex-col">
-                                <div className='bg-primary/10 py-1 px-2 rounded-lg'>
+                              <div className="mt-2 flex w-fit flex-col">
+                                <div className="rounded-lg bg-primary/10 px-2 py-1">
                                   <div className="mb-1 flex items-center gap-2 text-primary">
                                     <Sparkles className="h-4 w-4" />
                                     AI Suggestions
