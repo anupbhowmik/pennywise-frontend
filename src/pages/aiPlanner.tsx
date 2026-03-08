@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Textarea } from '@/components/ui/textarea'
 import { useApiRequest } from "@/hooks/useApiRequest"
 import { Sparkles, Send, Loader2 } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
@@ -157,8 +158,8 @@ export default function AiPlannerPage() {
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask me anything about your finances..."
-              className="flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Ask me anything about your plans..."
+              className="flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               disabled={isLoading}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
