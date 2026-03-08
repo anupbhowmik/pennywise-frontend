@@ -45,10 +45,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     | {
         display_name?: string
         email?: string
-        income?: number | null
-        rent?: number | null
-        gym_subscription?: number | null
-        insurance?: number | null
+        monthly_income?: number | null
+        monthly_rent?: number | null
+        monthly_gym_subscription?: number | null
+        monthly_insurance?: number | null
       }
     | undefined
 
@@ -60,18 +60,35 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [insurance, setInsurance] = useState<string>("")
   const [saving, setSaving] = useState(false)
 
-  // Show dialog if income or rent is null/undefined/empty after login/profile fetch
+  // Prefill fields from userData whenever dialog opens
   useEffect(() => {
-    if (userData && (userData.income == null || userData.rent == null)) {
-      setShowProfileDialog(true)
-      setIncome(userData.income != null ? String(userData.income) : "")
-      setRent(userData.rent != null ? String(userData.rent) : "")
+    if (showProfileDialog && userData) {
+      setIncome(
+        userData.monthly_income != null ? String(userData.monthly_income) : ""
+      )
+      setRent(
+        userData.monthly_rent != null ? String(userData.monthly_rent) : ""
+      )
       setGymSubscription(
-        userData.gym_subscription != null
-          ? String(userData.gym_subscription)
+        userData.monthly_gym_subscription != null
+          ? String(userData.monthly_gym_subscription)
           : ""
       )
-      setInsurance(userData.insurance != null ? String(userData.insurance) : "")
+      setInsurance(
+        userData.monthly_insurance != null
+          ? String(userData.monthly_insurance)
+          : ""
+      )
+    }
+  }, [showProfileDialog, userData])
+
+  // Show dialog if income or rent is null/undefined/empty after login/profile fetch
+  useEffect(() => {
+    if (
+      userData &&
+      (userData.monthly_income == null || userData.monthly_rent == null)
+    ) {
+      setShowProfileDialog(true)
     }
   }, [userData])
 
@@ -82,10 +99,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       url: `${API_BASE_URL}/v1/auth/user/profile`,
       method: "PUT",
       reqBody: {
-        income: Number(income),
-        rent: Number(rent),
-        gym_subscription: Number(gymSubscription),
-        insurance: Number(insurance),
+        monthly_income: Number(income),
+        monthly_rent: Number(rent),
+        monthly_gym_subscription: Number(gymSubscription),
+        monthly_insurance: Number(insurance),
       },
     })
     if (response) {
