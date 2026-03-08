@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/App"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -19,6 +20,7 @@ import {
   AlertTriangle,
   Lightbulb,
 } from "lucide-react"
+import { useState } from "react"
 
 export default function Dashboard() {
   const { data, dataLoading, error } = useApiRequest({
@@ -35,6 +37,9 @@ export default function Dashboard() {
     severity: "info" | "warning" | "alert"
   }
   const insights: Insight[] = (data?.insights || []) as Insight[]
+
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [loadingId, setLoadingId] = useState<string | null>(null)
 
   return (
     <div className="animate-in duration-500 fade-in slide-in-from-bottom-4">
@@ -125,7 +130,8 @@ export default function Dashboard() {
               <CardTitle className="text-lg">AI Insights</CardTitle>
             </div>
             <CardDescription>
-              Based on your recent financial activity, here are some insights and tips to help you manage your money better.
+              Based on your recent financial activity, here are some insights
+              and tips to help you manage your money better.
             </CardDescription>
           </CardHeader>
           <CardContent className="relative space-y-4 pt-4">
@@ -139,14 +145,12 @@ export default function Dashboard() {
               </div>
             )}
             {insights.map((insight) => {
-              // Icon selection based on type
               let Icon = TrendingUp
               if (insight.type === "tip") Icon = Lightbulb
               else if (insight.type === "warning") Icon = AlertTriangle
               else if (insight.type === "trend") Icon = TrendingUp
               else if (insight.type === "info") Icon = Info
 
-              // Color selection based on severity
               let colorClass = "bg-blue-500/10 text-blue-500"
               if (insight.severity === "alert")
                 colorClass = "bg-destructive/20 text-destructive"
@@ -174,14 +178,58 @@ export default function Dashboard() {
                         {insight.desc}
                       </p>
                       {insight.details && (
-                        <details className="mt-2">
-                          <summary className="cursor-pointer text-xs text-primary underline">
-                            Details
-                          </summary>
-                          <div className="mt-1 text-sm text-muted-foreground">
-                            {insight.details}
-                          </div>
-                        </details>
+                        <div className="mt-3">
+                          {expandedId === insight.id ? (
+                            loadingId === insight.id ? (
+                              <div className="flex items-center gap-2 text-sm text-primary">
+                                <svg
+                                  className="h-4 w-4 animate-spin"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                    fill="none"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                  />
+                                </svg>
+                                Loading AI suggestions...
+                              </div>
+                            ) : (
+                              <div className="flex w-fit mt-2 flex-col">
+                                <div className='bg-primary/10 py-1 px-2 rounded-lg'>
+                                  <div className="mb-1 flex items-center gap-2 text-primary">
+                                    <Sparkles className="h-4 w-4" />
+                                    AI Suggestions
+                                  </div>
+                                </div>
+                                <div className="mt-1 px-2 text-sm/6 text-muted-foreground">
+                                  {insight.details}
+                                </div>
+                              </div>
+                            )
+                          ) : (
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setLoadingId(insight.id)
+                                setExpandedId(insight.id)
+                                setTimeout(() => setLoadingId(null), 2000)
+                              }}
+                            >
+                              See More Details
+                              <Sparkles className="ml-1 inline-block h-3 w-3 animate-pulse" />
+                            </Button>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
