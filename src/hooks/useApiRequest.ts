@@ -1,6 +1,7 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
+import { navigate } from 'wouter/use-browser-location';
 
 interface UseApiRequestParams {
   url: string;
@@ -52,6 +53,7 @@ export const useApiRequest = ({url, method, reqBody={}}: UseApiRequestParams) =>
             } catch (error) {
                 console.log(error)
                 toast.error("Failed to fetch data")
+                navigate('/login')
                 setError(error instanceof Error ? error : new Error(String(error)));
             } finally {
                 setDataLoading(false)

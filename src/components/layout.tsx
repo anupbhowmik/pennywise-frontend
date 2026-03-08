@@ -213,7 +213,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex h-16 items-center border-b border-border px-6">
           <Wallet className="mr-2 h-6 w-6 text-primary" />
           <span className="font-display text-xl font-bold tracking-tight">
-            PocketFlow
+            PennyWise
           </span>
         </div>
 

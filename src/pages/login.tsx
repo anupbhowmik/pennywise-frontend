@@ -3,7 +3,7 @@ import { Receipt, Loader2 } from "lucide-react"
 import { GoogleLogin } from "@react-oauth/google"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
-import toast from 'react-hot-toast'
+import toast from "react-hot-toast"
 
 const AUTH_VERIFY_ENDPOINT = "/v1/auth/google"
 
@@ -55,7 +55,7 @@ export default function Login() {
             <Receipt className="h-8 w-8 text-primary" />
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight">
-            Welcome Back to PocketFlow
+            Welcome Back to PennyWise
           </h1>
           <p className="mt-2 text-muted-foreground">
             Sign in to get a personal Finance Assistant powered by AI, tailored
@@ -65,6 +65,7 @@ export default function Login() {
 
         <div className="flex flex-col items-center justify-center gap-3">
           <GoogleLogin
+            theme="filled_black"
             onSuccess={handleGoogleSuccess}
             onError={() => {
               console.error("Google Sign-In failed")
