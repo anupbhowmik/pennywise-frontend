@@ -19,6 +19,7 @@ import {
 import { API_BASE_URL } from "@/App"
 import { useApiRequest } from "@/hooks/useApiRequest"
 import { regularApiRequest } from "@/hooks/regularApiRequest"
+import toast from "react-hot-toast"
 
 type ReceiptItem = {
   id: number
@@ -52,6 +53,11 @@ export default function DataPage() {
   const [detailOpen, setDetailOpen] = useState(false)
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailError, setDetailError] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [transactionToDelete, setTransactionToDelete] =
+    useState<TransactionRow | null>(null)
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
 
   const { data, dataLoading, error } = useApiRequest({
     url: `${API_BASE_URL}/v1/data/items`,
@@ -115,6 +121,65 @@ export default function DataPage() {
     }
   }
 
+  const handleDeleteTransaction = async (transactionId: string) => {
+    setDeletingIds((prev) => {
+      const next = new Set(prev)
+      next.add(transactionId)
+      return next
+    })
+
+    try {
+      const response = await regularApiRequest({
+        url: `${API_BASE_URL}/v1/data/transaction/${transactionId}`,
+        method: "DELETE",
+      })
+
+      if (!response) {
+        toast.error("Unable to delete transaction.")
+        return
+      }
+
+      setDeletedIds((prev) => {
+        const next = new Set(prev)
+        next.add(transactionId)
+        return next
+      })
+
+      if (selectedTransaction?.id === transactionId) {
+        setDetailOpen(false)
+        setSelectedTransaction(null)
+        setDetailError(null)
+        setDetailLoading(false)
+      }
+
+      toast.success("Transaction deleted")
+    } catch {
+      toast.error("Unable to delete transaction.")
+    } finally {
+      setDeletingIds((prev) => {
+        const next = new Set(prev)
+        next.delete(transactionId)
+        return next
+      })
+    }
+  }
+
+  const openDeleteDialog = (transaction: TransactionRow) => {
+    setTransactionToDelete(transaction)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDeleteTransaction = async () => {
+    if (!transactionToDelete) {
+      return
+    }
+
+    const transactionId = transactionToDelete.id
+    await handleDeleteTransaction(transactionId)
+    setDeleteDialogOpen(false)
+    setTransactionToDelete(null)
+  }
+
   if (dataLoading) {
     return (
       <div className="animate-in duration-500 fade-in slide-in-from-bottom-4">
@@ -140,13 +205,14 @@ export default function DataPage() {
   }
 
   const items: TransactionRow[] = responseData?.items || []
+  const visibleItems = items.filter((item) => !deletedIds.has(item.id))
 
   return (
     <div className="animate-in duration-500 fade-in slide-in-from-bottom-4">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Transaction History</h1>
         <p className="text-sm text-muted-foreground">
-          {responseData?.count || 0} total transactions
+          {visibleItems.length} total transactions
         </p>
       </div>
       <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
@@ -174,7 +240,7 @@ export default function DataPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.length === 0 ? (
+            {visibleItems.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -184,7 +250,7 @@ export default function DataPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              items.map((row) => (
+              visibleItems.map((row) => (
                 <TableRow
                   key={row.id}
                   className="transition-colors hover:bg-accent/40"
@@ -217,17 +283,11 @@ export default function DataPage() {
                       </Button>
                       <Button
                         size="sm"
-                        variant="outline"
-                        onClick={() => alert(`View details for ${row.id}`)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
                         variant="destructive"
-                        onClick={() => alert(`Delete ${row.id}`)}
+                        disabled={deletingIds.has(row.id)}
+                        onClick={() => openDeleteDialog(row)}
                       >
-                        Delete
+                        {deletingIds.has(row.id) ? "Deleting..." : "Delete"}
                       </Button>
                     </div>
                   </TableCell>
@@ -408,6 +468,49 @@ export default function DataPage() {
           )}
 
           <DialogFooter showCloseButton />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          setDeleteDialogOpen(open)
+          if (!open) {
+            setTransactionToDelete(null)
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Transaction</DialogTitle>
+            <DialogDescription>
+              {transactionToDelete
+                ? `Are you sure you want to delete the transaction from ${transactionToDelete.merchant_name} on ${formatDate(transactionToDelete.purchase_date)}?`
+                : "Are you sure you want to delete this transaction?"}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false)
+                setTransactionToDelete(null)
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={
+                !transactionToDelete || deletingIds.has(transactionToDelete.id)
+              }
+              onClick={() => void confirmDeleteTransaction()}
+            >
+              {transactionToDelete && deletingIds.has(transactionToDelete.id)
+                ? "Deleting..."
+                : "Delete"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
