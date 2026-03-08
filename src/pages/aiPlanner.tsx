@@ -117,7 +117,7 @@ export default function AiPlannerPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="animate-in duration-500 fade-in slide-in-from-bottom-4">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <h1 className="text-3xl font-bold">AI Planner</h1>
